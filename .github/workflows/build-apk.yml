@@ -29,10 +29,14 @@ jobs:
           npm install --legacy-peer-deps
           npm run build
 
-      - name: Setup Capacitor and Android
+      - name: Install Capacitor CLI & Core
         run: |
-          npx @capacitor/cli init "حضور وانصراف كشافة العباس" "com.kashaf.alabbas" --web-dir "dist"
+          npm install -g @capacitor/cli
           npm install @capacitor/core @capacitor/android --legacy-peer-deps
+
+      - name: Init & Sync Capacitor
+        run: |
+          npx cap init "حضور وانصراف كشافة العباس" "com.kashaf.alabbas" --web-dir "dist"
           npx cap add android
           npx cap copy android
           npx cap sync android
