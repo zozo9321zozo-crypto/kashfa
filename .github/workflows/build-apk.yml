@@ -10,16 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. سحب كود المشروع من GitHub
+      # 1. سحب كود المشروع
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2. إعداد بيئة Node.js
+      # 2. إعداد بيئة Node.js (بدون cache لتفادي الخطأ)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
       # 3. إعداد بيئة Java لبناء الأندرويد
       - name: Setup Java JDK
@@ -31,7 +30,7 @@ jobs:
       # 4. تثبيت المكتبات وتثبيت Capacitor تلقائياً
       - name: Install Dependencies
         run: |
-          npm ci
+          npm install
           npm install @capacitor/core @capacitor/cli @capacitor/android
 
       # 5. بناء مشروع Vite (توليد مجلد dist)
@@ -46,7 +45,7 @@ jobs:
           npx cap copy android
           npx cap sync android
 
-      # 7. تجميع وتوليد ملف הـ APK
+      # 7. تجميع وتوليد ملف الـ APK
       - name: Build Android APK
         run: |
           cd android
