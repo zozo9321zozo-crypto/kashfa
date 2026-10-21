@@ -39,6 +39,15 @@ jobs:
           npx cap add android
           npx cap copy android
           npx cap sync android
+          
+          # حل تعارض مكتبات كوتلين نهائياً
+          echo "" >> android/build.gradle
+          echo "allprojects {" >> android/build.gradle
+          echo "    configurations.all {" >> android/build.gradle
+          echo "        resolutionStrategy.force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'" >> android/build.gradle
+          echo "        resolutionStrategy.force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'" >> android/build.gradle
+          echo "    }" >> android/build.gradle
+          echo "}" >> android/build.gradle
 
       - name: Build Android APK
         run: |
