@@ -10,49 +10,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. سحب كود المشروع
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2. إعداد بيئة Node.js (بدون cache لتفادي الخطأ)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 18
 
-      # 3. إعداد بيئة Java لبناء الأندرويد
       - name: Setup Java JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
-      # 4. تثبيت المكتبات وتثبيت Capacitor تلقائياً
-      - name: Install Dependencies
+      - name: Build Web Project
         run: |
           npm install
-          npm install @capacitor/core @capacitor/cli @capacitor/android
+          npm run build
 
-      # 5. بناء مشروع Vite (توليد مجلد dist)
-      - name: Build Web Project
-        run: npm run build
-
-      # 6. تهيئة منصة الأندرويد ومزامنتها
-      - name: Capacitor Sync
+      - name: Setup Capacitor and Android
         run: |
-          npx cap init "حضور وانصراف كشافة العباس" "com.kashaf.alabbas" --web-dir "dist" || true
-          npx cap add android || true
+          npx @capacitor/cli init "حضور وانصراف كشافة العباس" "com.kashaf.alabbas" --web-dir "dist"
+          npm install @capacitor/core @capacitor/android
+          npx cap add android
           npx cap copy android
           npx cap sync android
 
-      # 7. تجميع وتوليد ملف الـ APK
       - name: Build Android APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      # 8. رفع ملف الـ APK لتتمكن من تنزيله
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
